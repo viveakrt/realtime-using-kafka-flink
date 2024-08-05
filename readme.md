@@ -135,4 +135,101 @@ This architecture supports real-time metadata ingestion and consumption, integra
 
 ---
 
+Estimating the cost of deployment involves considering several factors, including infrastructure, managed services, and other operational expenses. Here’s a detailed cost estimate based on typical usage patterns for each component in the architecture:
+
+### Infrastructure Costs Approximation
+
+1. **Kubernetes Cluster**
+   - **Cloud Provider**: GCP
+   - **Instance Types**: n1-standard-8vCPUs,20GB
+   - **Nodes**: 4 nodes (to start)
+   - **Estimated Cost**: ~$300 per month per node
+   - **Total Cost**: $1,200 per month
+
+2. **Apache Kafka**
+   - **Managed Kafka Service**: AWS MSK, Confluent Cloud, or equivalent
+   - **Throughput**: Moderate (up to 10 MB/s)
+   - **Estimated Cost**: ~$500 per month
+
+3. **Apache Flink**
+   - **Managed Service**: AWS Kinesis Data Analytics, GCP Dataflow, or self-managed on Kubernetes
+   - **Compute Hours**: 200 hours per month
+   - **Estimated Cost**: ~$400 per month
+
+4. **Apache Atlas**
+   - **Deployment**: Kubernetes
+   - **Instance Types**: General-purpose instances
+   - **Estimated Cost**: $200 per month
+
+5. **Databases (PostgreSQL, Cassandra)**
+   - **Managed Service**: AWS RDS for PostgreSQL, AWS Keyspaces for Cassandra, or equivalent
+   - **Storage**: 500 GB
+   - **Read/Write IOPS**: Moderate
+   - **Estimated Cost**: PostgreSQL ($300 per month), Cassandra ($400 per month)
+   - **Total Cost**: $700 per month
+
+### Additional Services Costs
+
+1. **Keycloak**
+   - **Deployment**: Kubernetes
+   - **Instance Types**: General-purpose instances
+   - **Estimated Cost**: $100 per month
+
+2. **Apache Airflow**
+   - **Managed Service**: Astronomer, Google Cloud Composer, or self-managed
+   - **Compute Hours**: 200 hours per month
+   - **Estimated Cost**: ~$300 per month
+
+3. **Secret Manager**
+   - **Managed Service**: AWS Secrets Manager, GCP Secret Manager
+   - **Number of Secrets**: 100
+   - **Estimated Cost**: $50 per month
+
+### Monitoring and Logging Costs
+
+1. **Prometheus & Grafana**
+   - **Deployment**: Kubernetes
+   - **Instance Types**: General-purpose instances
+   - **Estimated Cost**: $100 per month
+
+2. **Datadog**
+   - **Monitored Hosts**: 10
+   - **Log Volume**: 100 GB per month
+   - **Estimated Cost**: $500 per month
+
+3. **PagerDuty**
+   - **Users**: 5
+   - **Estimated Cost**: $100 per month
+
+4. **Slack**
+   - **Notifications**: Free tier (additional costs if upgrading to premium plans)
+   - **Estimated Cost**: $0 per month
+
+### Summary of Estimated Costs
+
+| Component                  | Monthly Cost |
+|----------------------------|--------------|
+| Kubernetes Cluster         | $1,200       |
+| Apache Kafka               | $500         |
+| Apache Flink               | $400         |
+| Apache Atlas               | $200         |
+| Databases                  | $700         |
+| Keycloak                   | $100         |
+| Apache Airflow             | $300         |
+| Secret Manager             | $50          |
+| Prometheus & Grafana       | $100         |
+| Datadog                    | $500         |
+| PagerDuty                  | $100         |
+| Slack                      | $0           |
+| **Total Estimated Cost**   | **$4,150**   |
+
+### Additional Considerations
+
+1. **Data Transfer Costs**: Depending on the volume of data transfer between services and regions.
+2. **Storage Costs**: Costs might increase with data growth, particularly for logs and backups.
+3. **Support Plans**: Costs for support plans from cloud providers or third-party services.
+4. **Operational Costs**: Costs related to managing and maintaining the infrastructure and services.
+
+This estimate provides a baseline for deployment costs, but actual costs may vary based on usage patterns, service levels, and specific requirements. It is advisable to monitor usage and optimize resource allocation regularly to manage costs effectively.
+
 This documentation provides a comprehensive overview of the architecture, ensuring that Atlan can handle real-time metadata ingestion and consumption efficiently and securely.
