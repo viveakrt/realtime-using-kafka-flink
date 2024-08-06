@@ -23,21 +23,30 @@ def main():
            .get_configuration() \
            .set_string("pipeline.jars", f"file://{kafka_jar}")
 
-    #######################################################################
-    # Create Kafka Source Table with DDL
-    #######################################################################
     src_ddl = """
         CREATE TABLE sales_usd (
-            seller_id VARCHAR,
-            amount_usd DOUBLE,
-            sale_ts BIGINT,
-            proctime AS PROCTIME()
+            eventType STRING,
+            source STRING,
+            timestamp TIMESTAMP(3),
+            tableId STRING,
+            issueId STRING,
+            issueType STRING,
+            severity STRING,
+            description STRING,
+            metadata STRUCT<
+                detectedBy STRING,
+                detectedAt TIMESTAMP(3),
+                affectedColumns ARRAY<STRING>,
+                resolutionStatus STRING
+            >
         ) WITH (
             'connector' = 'kafka',
             'topic' = 'sales-usd',
             'properties.bootstrap.servers' = 'localhost:9092',
             'properties.group.id' = 'sales-usd-group',
-            'format' = 'json'
+            'format' = 'json',
+            'json.timestamp-format.standard' = 'ISO-8601',
+            'json.ignore-parse-errors' = 'true'
         )
     """
 
@@ -49,19 +58,23 @@ def main():
     print('\nSource Schema')
     tbl.print_schema()
 
-    #####################################################################
-    # Define Tumbling Window Aggregate Calculation (Seller Sales Per Minute)
-    #####################################################################
     sql = """
         SELECT
-          seller_id,
-          TUMBLE_END(proctime, INTERVAL '60' SECONDS) AS window_end,
-          SUM(amount_usd) * 0.85 AS window_sales
-        FROM sales_usd
+          event.seller_id,
+          TUMBLE_END(event.timestamp, INTERVAL '60' SECONDS) AS window_end,
+          CAST(SUM(event.amount_usd) * 0.85 AS DECIMAL(10, 2)) AS window_sales
+        FROM (
+          VALUES
+            (%(seller_id)s, TIMESTAMP '%(timestamp)s', %(amount_usd)s)
+        ) AS event(seller_id, timestamp, amount_usd)
         GROUP BY
-          TUMBLE(proctime, INTERVAL '60' SECONDS),
-          seller_id
-    """
+          TUMBLE(event.timestamp, INTERVAL '60' SECONDS),
+          event.seller_id
+    """ % {
+        'seller_id': 1,
+        'timestamp': datetime.now(timezone.utc).isoformat(),
+        'amount_usd': 100.0,
+    }
     revenue_tbl = tbl_env.sql_query(sql)
 
     print('\nProcess Sink Schema')
