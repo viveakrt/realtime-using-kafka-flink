@@ -19,20 +19,11 @@ def generate_random_issue():
     event = {
         "eventType": "TABLE_HEALTH_ISSUE",
         "source": "MonteCarlo",
-        "timestamp": (datetime.now(timezone.utc) - timedelta(minutes=random.randint(0, 60))).isoformat(),
         "tableId": table_id,
         "tableId": table_id,
         "issueId": issue_id,
         "issueType": issue_type,
         "severity": severity,
-        "description": f"Issue detected: {issue_type} with severity {severity}",
-        "metadata": {
-            "detectedBy": "MonteCarlo",
-            "detectedAt":(datetime.now(timezone.utc) - timedelta(minutes=random.randint(0, 60))).isoformat(),
-        "tableId": table_id,
-            "affectedColumns": affected_columns,
-            "resolutionStatus": "Unresolved"
-        }
     }
     return event
 
